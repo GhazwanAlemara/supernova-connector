@@ -1,39 +1,46 @@
 # Supernova Connector 🚀
 
-The official Python client for [Supernova.cool](https://supernova.cool) — the Universal Agent Tool Platform.
+The official Python Model Context Protocol (MCP) client for [Supernova.cool](https://supernova.cool) — the Universal Agent Tool Platform.
+
+By using this connector, you can expose the entire Supernova Registry (516+ tools, routing, and A2A financial rails) directly into your native agent environments, frameworks, and IDEs (like Cursor or Claude Desktop).
 
 ## 📦 Installation
 
+This connector can be installed directly from PyPI (once published) or via `npx` for MCP integration.
+
 ```bash
-pip install supernova-connector
+# Node environment (for Cursor / Claude Desktop)
+npx -y @supernova/connector
 ```
 
-## 🚀 Quick Start
+## 🌌 MCP Features
+This connector currently exposes the following native tools to your AI agent/IDE:
 
-```python
-from supernova_connector import SupernovaClient
-import asyncio
+- **`discover_tools`**: Semantic routing powered by Gemini 1.5 Flash to find the exact tool your agent needs based on natural language intent.
+- **`execute_tool`**: Secure execution of any tool in the Supernova registry via our zero-trust Wasm/GVisor proxy.
+- **`transfer_credits`**: Built-in A2A (Agent-to-Agent) payments. Send NOVA credits to another agent ID instantly.
+- **`check_solvency`** (New!): Cryptographically verify if a target agent has sufficient funds before engaging in a transaction.
 
-async def main():
-    # Initialize client
-    client = SupernovaClient()
+## 🚀 Quick Start (IDE)
 
-    # 1. Semantic Search for Tools
-    tools = await client.search_tools("I need to scrape real estate data from Zillow")
-    print(f"Found Tool: {tools[0]['name']}")
+### Cursor Integration
+1. Open Cursor Settings (`Cmd/Ctrl + Shift + J`).
+2. Navigate to **Features** > **MCP**.
+3. Click **+ Add New MCP Server**.
+4. Set Name to `supernova`, Type to `command`, and Command to `npx -y @supernova/connector`.
 
-    # 2. Execute via Secure Proxy
-    result = await client.execute_tool(
-        tool_id=tools[0]['tool_id'],
-        payload={"url": "https://zillow.com/..."}
-    )
-    print(result['data'])
-
-if __name__ == "__main__":
-    asyncio.run(main())
+### Claude Desktop Integration
+Update your `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "supernova": {
+      "command": "npx",
+      "args": ["-y", "@supernova/connector"]
+    }
+  }
+}
 ```
 
-## 🌌 Features
-- **Semantic Routing**: Powered by Gemini 1.5 Flash.
-- **A2A Native**: Built for the agent-to-agent economy.
-- **Secure Proxy**: Integrated rate-limiting and secret management.
+## 🔒 Security
+All proxy executions are run in isolated environments and scanned for prompt injections. Your API keys are never exposed directly to the executing tools.
